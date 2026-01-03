@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iPad Pro Notes Cloud</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <h2>My Notes</h2>
+            <button id="add-note-btn">+ New Note</button>
+        </div>
+        <div id="note-list"></div>
+    </aside>
+
+    <main id="workspace">
+        <header id="toolbar">
+            <div class="tool-group">
+                <button onclick="setTool('pen')" id="pen-tool" class="active">🖋️ Pen</button>
+                <button onclick="setTool('highlighter')" id="highlighter-tool">🖍️ Highlighter</button>
+                <button onclick="setTool('eraser')" id="eraser-tool">🧽 Eraser</button>
+                <input type="color" id="colorPicker" value="#000000">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-left:5px;">
+                    <label style="font-size:10px; color:#666;">Size</label>
+                    <input type="range" id="lineWidth" min="1" max="20" value="3" style="width:60px; cursor:pointer;">
+                </div>
+            </div>
+            <!-- Flow Diagram & Shapes -->
+            <div class="tool-group">
+                <button onclick="setTool('rectangle')">⬜ Rect</button>
+                <button onclick="setTool('circle')">⭕ Circle</button>
+                <button onclick="addText()">🔤 Text</button>
+            </div>
+            <div class="tool-group">
+                <button onclick="undo()">↩️</button>
+                <button onclick="redo()">↪️</button>
+                <button onclick="clearCanvas()">🗑️ Clear</button>
+                <button onclick="triggerOCR()">📷 Photo to Text</button>
+                <button onclick="toggleLining()">📏 Lines</button>
+                <button id="save-btn">☁️ Save to Cloud</button>
+                <input type="color" id="bgColorPicker" value="#ffffff" title="Paper Color">
+                <button onclick="deleteCurrentNote()" style="color:red;">❌ Delete</button>
+                <button onclick="downloadPDF()">📥 Export PDF</button>
+                <button onclick="toggleDarkMode()">🌓 Mode</button>
+            </div>
+        </header>
+
+        <div id="canvas-container" class="lining">
+            <canvas id="noteCanvas"></canvas>
+        </div>
+    </main>
+
+    <input type="file" id="imageInput" accept="image/*" style="display:none">
+
+<div id="loading-overlay" style="display:none;">Processing Image...</div>
+<script src="storage.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

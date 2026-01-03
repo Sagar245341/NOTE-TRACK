@@ -1,0 +1,7 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Dependencies and Environment
+node_modules/
+.env
