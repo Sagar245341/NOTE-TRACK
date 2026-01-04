@@ -23,3 +23,9 @@ Database: Supabase (PostgreSQL & Storage)
 OCR Engine: Tesseract.js
 
 PDF Generation: jsPDF
+
+## Improvements
+*   **Responsive Canvas:** The canvas now resizes automatically with the browser window.
+*   **Improved Text Tool:** You can now click anywhere on the canvas to add text at that specific position.
+*   **Persistent Dark Mode:** The application now remembers your dark mode preference.
+*   **Enhanced OCR:** The "Photo to Text" feature is now more efficient and provides visual feedback during processing.

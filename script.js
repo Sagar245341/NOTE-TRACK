@@ -21,6 +21,12 @@ window.addEventListener('load', () => {
     resizeCanvas();
     saveState(); // Save initial blank state
     renderSidebar(); // Load notes from Supabase
+    window.addEventListener('resize', resizeCanvas);
+
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
 });
 
 function resizeCanvas() {
@@ -36,9 +42,9 @@ window.setTool = function(tool) {
     currentTool = tool;
     // Update UI
     document.querySelectorAll('.tool-group button').forEach(btn => btn.classList.remove('active'));
-    const btnId = (tool === 'rectangle' || tool === 'circle' || tool === 'text') ? null : `${tool}-tool`;
-    if (btnId && document.getElementById(btnId)) {
-        document.getElementById(btnId).classList.add('active');
+    const btnId = (tool === 'rectangle' || tool === 'circle') ? null : `${tool}-tool`;
+    if (document.getElementById(`${tool}-tool`)) {
+        document.getElementById(`${tool}-tool`).classList.add('active');
     }
 };
 
@@ -59,9 +65,20 @@ function getPos(e) {
 }
 
 canvas.addEventListener('pointerdown', (e) => {
+    const pos = getPos(e);
+    if (currentTool === 'text') {
+        const text = prompt("Enter text:");
+        if (text) {
+            ctx.font = "20px Arial";
+            ctx.fillStyle = brushColor;
+            ctx.fillText(text, pos.x, pos.y);
+            saveState();
+        }
+        return; // Don't start drawing
+    }
+
     drawing = true;
     ctx.beginPath();
-    const pos = getPos(e);
     startX = pos.x;
     startY = pos.y;
     ctx.moveTo(pos.x, pos.y);
@@ -161,23 +178,39 @@ window.clearCanvas = function() {
     }
 };
 
-// --- Features ---
-window.addText = function() {
-    const text = prompt("Enter text:");
-    if (text) {
-        ctx.font = "20px Arial";
-        ctx.fillStyle = brushColor;
-        ctx.fillText(text, 50, 50); // Simple placement
+window.triggerOCR = async function() {
+    const input = document.getElementById('imageInput');
+    input.onchange = async (e) => {
+        document.getElementById('loading-overlay').style.display = 'block';
+        const file = e.target.files[0];
+        
+        const worker = await Tesseract.createWorker('eng');
+        const { data: { text } } = await worker.recognize(file);
+        
+        // Smart placement: find an empty spot or bottom of note
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+        ctx.font = "20px 'Segoe UI', sans-serif";
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? "white" : "black";
+        
+        // Wrap text logic
+        const lines = text.split('\n');
+        lines.forEach((line, i) => {
+            ctx.fillText(line, 50, 100 + (i * 25));
+        });
+        
+        await worker.terminate();
+        document.getElementById('loading-overlay').style.display = 'none';
         saveState();
-    }
-};
-
-window.toggleLining = function() {
-    document.getElementById('canvas-container').classList.toggle('lining');
-};
+    };
+    input.click();
+}
 
 window.toggleDarkMode = function() {
     document.body.classList.toggle('dark-mode');
+    // Save preference
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 };
 
 window.downloadPDF = function() {
