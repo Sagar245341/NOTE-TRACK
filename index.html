@@ -35,14 +35,29 @@
             <div class="tool-group">
                 <button onclick="setTool('rectangle')">⬜ Rect</button>
                 <button onclick="setTool('circle')">⭕ Circle</button>
+                <button onclick="setTool('arrow')">↗️ Arrow</button>
                 <button onclick="setTool('text')" id="text-tool">🔤 Text</button>
+            </div>
+            <!-- Font and Quick Color Options -->
+            <div class="tool-group">
+                <select id="font-family-select" onchange="setFontFamily(this.value)">
+                    <option value="Arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Brush Script MT">Brush Script MT</option>
+                </select>
+                <button onclick="setPenColor('#000000')">⚫ Black Pen</button>
+                <button onclick="setPenColor('#0000FF')">🔵 Blue Pen</button>
             </div>
             <div class="tool-group">
                 <button onclick="undo()">↩️</button>
                 <button onclick="redo()">↪️</button>
                 <button onclick="clearCanvas()">🗑️ Clear</button>
                 <button onclick="triggerOCR()">📷 Photo to Text</button>
-                <button onclick="toggleLining()">📏 Lines</button>
+                <button onclick="setPageStyle('lined')">📏 Lines</button>
+                <button onclick="setPageStyle('grid')">▦ Grid</button>
                 <button id="save-btn">☁️ Save to Cloud</button>
                 <input type="color" id="bgColorPicker" value="#ffffff" title="Paper Color">
                 <button onclick="deleteCurrentNote()" style="color:red;">❌ Delete</button>

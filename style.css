@@ -21,6 +21,7 @@ body {
 /* Sidebar Styling */
 #sidebar {
     width: 260px;
+    min-width: 260px; /* Prevent shrinking below this */
     background: linear-gradient(180deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
     color: var(--text-light);
     display: flex;
@@ -28,6 +29,23 @@ body {
     padding: 20px;
     box-shadow: 4px 0 15px rgba(0,0,0,0.1);
     z-index: 20;
+    transition: all 0.3s ease; /* Smooth transition for responsiveness */
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        left: -260px; /* Hide by default */
+        height: 100vh;
+        /* Add a mechanism (e.g., a button) to toggle this */
+    }
+    body.sidebar-open #sidebar {
+        left: 0;
+    }
+    #workspace {
+        margin-left: 0; /* No sidebar pushing content */
+    }
 }
 
 .sidebar-header h2 {
@@ -74,7 +92,7 @@ body {
     border-left: 3px solid transparent;
 }
 
-.note-item:hover {
+.note-item:hover, .note-item.active {
     background: rgba(255,255,255,0.1);
     border-left-color: var(--secondary-color);
 }
@@ -85,6 +103,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: hidden; /* Prevent horizontal scroll from canvas-container padding */
 }
 
 #toolbar {
@@ -94,7 +113,7 @@ body {
     display: flex;
     gap: 15px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow items to wrap */
     z-index: 10;
     border-bottom: 1px solid #eee;
 }
@@ -109,6 +128,7 @@ body {
 
 .tool-group:last-child {
     border-right: none;
+    padding-right: 0;
 }
 
 button {
@@ -137,7 +157,25 @@ button.active {
     border-color: var(--primary-color);
 }
 
-/* Inputs */
+/* New styles for font family select */
+#font-family-select {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #444;
+    -webkit-appearance: none; /* Remove default arrow on some browsers */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23444%22%20d%3D%22M287%20197.3l-13.9%2013.9a17.2%2017.2%200%2001-24.3%200L146.2%2099.6%2043.6%20202.9a17.2%2017.2%200%2001-24.3%200L5.3%20189.2c-6.8-6.8-6.8-17.9%200-24.7L133.9%2023.2c6.8-6.8%2017.9-6.8%2024.7%200l128.8%20141.3c6.8%206.8%206.8%2017.9%200%2024.7z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 10px;
+    padding-right: 25px; /* Adjust for custom arrow */
+}
+
 input[type="color"] {
     border: none;
     width: 32px;
@@ -146,6 +184,7 @@ input[type="color"] {
     background: none;
     border-radius: 50%;
     overflow: hidden;
+    padding: 0;
 }
 
 /* Canvas Area */
@@ -156,16 +195,77 @@ input[type="color"] {
     display: flex;
     justify-content: center;
     padding: 30px;
+    position: relative; /* For proper positioning of canvas */
 }
 
 canvas {
     background-color: white;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     cursor: crosshair;
+    display: block; /* Remove extra space below canvas */
 }
 
 /* Lining Pattern */
-.lining canvas {
+#canvas-container.lined {
     background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
-    background-size: 100% 30px;
+    background-size: 100% 30px; /* Adjust as needed for line spacing */
+}
+
+/* Grid Pattern */
+#canvas-container.grid {
+    background-size: 30px 30px;
+    background-image: linear-gradient(to right, #e1e1e1 1px, transparent 1px),
+                      linear-gradient(to bottom, #e1e1e1 1px, transparent 1px);
+}
+
+/* Dark mode adjustments */
+body.dark-mode {
+    --bg-color: #2c3e50;
+    --toolbar-bg: #34495e;
+    --text-light: #ecf0f1;
+    --shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+body.dark-mode #toolbar button {
+    background: #4a627a;
+    color: #ecf0f1;
+    border-color: #34495e;
+}
+
+body.dark-mode #toolbar button:hover {
+    background-color: #5c7b99;
+    border-color: #4a627a;
+}
+
+body.dark-mode #toolbar button.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+body.dark-mode #font-family-select {
+    background: #4a627a;
+    color: #ecf0f1;
+    border-color: #34495e;
+}
+
+body.dark-mode .note-item {
+    background: rgba(255,255,255,0.08);
+}
+
+body.dark-mode .note-item:hover, body.dark-mode .note-item.active {
+    background: rgba(255,255,255,0.15);
+}
+
+body.dark-mode #canvas-container {
+    background-color: #1e272e;
+}
+
+body.dark-mode #canvas-container.lined {
+    background-image: linear-gradient(#5a6a7c 1px, transparent 1px);
+}
+
+body.dark-mode #canvas-container.grid {
+    background-image: linear-gradient(to right, #5a6a7c 1px, transparent 1px),
+                      linear-gradient(to bottom, #5a6a7c 1px, transparent 1px);
 }
